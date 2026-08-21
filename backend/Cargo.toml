@@ -1,0 +1,22 @@
+[package]
+name = "wip-server"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+axum = { version = "0.8", features = ["macros"] }
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "fs", "signal"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tower-http = { version = "0.6", features = ["fs", "cors", "trace", "request-id"] }
+chrono = { version = "0.4", features = ["serde"] }
+tracing = "0.1.44"
+tracing-subscriber = { version = "0.3.23", features = ["env-filter", "fmt"] }
+sqlx = { version = "0.8.6", features = ["sqlite", "runtime-tokio", "chrono"] }
+tracing-appender = "0.2.5"
+tracing-log = "0.2.0"
+anyhow = "1.0.102"
+email_address = "0.2.9"
+resend-rs = "0.25.1"
+minijinja = "2.19.0"
+uuid = "1.23.1"

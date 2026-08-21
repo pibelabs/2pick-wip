@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="de">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>2pick</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="stylesheet" href="/main.css" />
+        <link rel="stylesheet" href="/index.css" />
+        <script src="/index.js" defer></script>
+    </head>
+
+    <body>
+        <div id="progress"></div>
+
+        <div id="scroll-track">
+            <div id="scroll-spacer"></div>
+        </div>
+
+        <div id="stage">
+            <!-- Phase 0 -->
+            <div class="title-layer" id="titleLayer">
+                <div class="accent-line"></div>
+                <div class="wip">WIP</div>
+                <p class="title-sub">2pick</p>
+            </div>
+
+            <!-- Phase 1 -->
+            <div class="content-layer" id="contentLayer">
+                <div class="content-grid">
+                    <div class="blueprint" id="blueprintSvg">
+                        <svg
+                            viewBox="0 0 200 520"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <text
+                                x="100"
+                                y="16"
+                                text-anchor="middle"
+                                class="bp-heading"
+                            >
+                                GUITAR BLUEPRINT
+                            </text>
+                            <line
+                                x1="40"
+                                y1="22"
+                                x2="160"
+                                y2="22"
+                                class="bp-detail"
+                            />
+
+                            <!-- Headstock -->
+                            <path
+                                d="M 80,40 C 75,42 72,50 72,60 L 72,95 C 72,98 75,100 80,100 L 120,100 C 125,100 128,98 128,95 L 128,60 C 128,50 125,42 120,40 Z"
+                                class="bp-body"
+                            />
+                            <circle cx="82" cy="52" r="4" class="bp-detail" />
+                            <circle cx="82" cy="68" r="4" class="bp-detail" />
+                            <circle cx="82" cy="84" r="4" class="bp-detail" />
+                            <circle cx="118" cy="52" r="4" class="bp-detail" />
+                            <circle cx="118" cy="68" r="4" class="bp-detail" />
+                            <circle cx="118" cy="84" r="4" class="bp-detail" />
+                            <line
+                                x1="80"
+                                y1="98"
+                                x2="120"
+                                y2="98"
+                                stroke="#fff"
+                                stroke-width="1.5"
+                            />
+
+                            <!-- Neck -->
+                            <rect
+                                x="86"
+                                y="100"
+                                width="28"
+                                height="160"
+                                rx="2"
+                                class="bp-body"
+                            />
+                            <line
+                                x1="87"
+                                y1="120"
+                                x2="113"
+                                y2="120"
+                                class="bp-detail"
+                            />
+                            <line
+                                x1="87"
+                                y1="138"
+                                x2="113"
+                                y2="138"
+                                class="bp-detail"
+                            />
+                            <line
+                                x1="87"
+                                y1="154"
+                                x2="113"
+                                y2="154"
+                                class="bp-detail"
+                            />
+                            <line
+                                x1="87"
+                                y1="168"
+                                x2="113"
+                                y2="168"
+                                class="bp-detail"
+                            />
+                            <line
+                                x1="87"
+                                y1="180"
+                                x2="113"
+                                y2="180"
+                                class="bp-detail"
+                            />
+                            <line
+                                x1="87"
+                                y1="191"
+                                x2="113"
+                                y2="191"
+                                class="bp-detail"
+                            />
+                            <line
+                                x1="87"
+                                y1="201"
+                                x2="113"
+                                y2="201"
+                                class="bp-detail"
+                            />
+                            <line
+                                x1="87"
+                                y1="210"
+                                x2="113"
+                                y2="210"
+                                class="bp-detail"
+                            />
+                            <line
+                                x1="87"
+                                y1="218"
+                                x2="113"
+                                y2="218"
+                                class="bp-detail"
+                            />
+                            <line
+                                x1="87"
+                                y1="225"
+                                x2="113"
+                                y2="225"
+                                class="bp-detail"
+                            />
+                            <line
+                                x1="87"
+                                y1="232"
+                                x2="113"
+                                y2="232"
+                                class="bp-detail"
+                            />
+                            <line
+                                x1="87"
+                                y1="238"
+                                x2="113"
+                                y2="238"
+                                class="bp-detail"
+                            />
+                            <circle cx="100" cy="129" r="2" class="bp-dot" />
+                            <circle cx="100" cy="161" r="2" class="bp-dot" />
+                            <circle cx="100" cy="186" r="2" class="bp-dot" />
+                            <circle cx="100" cy="206" r="2" class="bp-dot" />
+                            <circle cx="95" cy="232" r="1.5" class="bp-dot" />
+                            <circle cx="105" cy="232" r="1.5" class="bp-dot" />
+
+                            <!-- Strings -->
+                            <g opacity="0.1" stroke="#fff" stroke-width="0.4">
+                                <line x1="91" y1="98" x2="91" y2="260" />
+                                <line x1="95" y1="98" x2="95" y2="260" />
+                                <line x1="99" y1="98" x2="99" y2="260" />
+                                <line x1="103" y1="98" x2="103" y2="260" />
+                                <line x1="107" y1="98" x2="107" y2="260" />
+                                <line x1="111" y1="98" x2="111" y2="260" />
+                            </g>
+
+                            <!-- Body -->
+                            <path
+                                d="M 86,260 C 65,265 40,288 40,335 C 40,362 50,382 58,395 C 43,408 28,428 28,450 C 28,478 55,503 100,508 C 145,503 172,478 172,450 C 172,428 157,408 142,395 C 150,382 160,362 160,335 C 160,288 135,265 114,260"
+                                class="bp-body"
+                            />
+
+                            <!-- Soundhole -->
+                            <circle cx="100" cy="350" r="28" class="bp-body" />
+                            <circle
+                                cx="100"
+                                cy="350"
+                                r="30"
+                                class="bp-detail"
+                            />
+                            <circle
+                                cx="100"
+                                cy="350"
+                                r="25"
+                                stroke="#C0392B"
+                                stroke-width="0.4"
+                                fill="none"
+                                class="bp-dim"
+                            />
+                            <circle
+                                cx="100"
+                                cy="350"
+                                r="34"
+                                stroke="#C0392B"
+                                stroke-width="0.3"
+                                fill="none"
+                                class="bp-dim"
+                            />
+
+                            <!-- Bridge -->
+                            <rect
+                                x="85"
+                                y="420"
+                                width="30"
+                                height="6"
+                                rx="2"
+                                class="bp-body"
+                            />
+                            <circle cx="91" cy="430" r="1.2" fill="#fff" />
+                            <circle cx="96" cy="430" r="1.2" fill="#fff" />
+                            <circle cx="101" cy="430" r="1.2" fill="#fff" />
+                            <circle cx="106" cy="430" r="1.2" fill="#fff" />
+
+                            <!-- Pickguard -->
+                            <path
+                                d="M 66,330 C 58,345 55,380 65,400 L 90,395 C 84,380 80,355 84,335 Z"
+                                class="bp-detail"
+                                opacity="0.15"
+                            />
+
+                            <!-- Dimensions -->
+                            <line
+                                x1="20"
+                                y1="335"
+                                x2="20"
+                                y2="508"
+                                class="bp-dim"
+                            />
+                            <line
+                                x1="25"
+                                y1="335"
+                                x2="15"
+                                y2="335"
+                                class="bp-dim"
+                            />
+                            <line
+                                x1="180"
+                                y1="335"
+                                x2="180"
+                                y2="508"
+                                class="bp-dim"
+                            />
+                            <line
+                                x1="175"
+                                y1="335"
+                                x2="185"
+                                y2="335"
+                                class="bp-dim"
+                            />
+                            <text
+                                x="14"
+                                y="425"
+                                class="bp-label"
+                                transform="rotate(-90,14,425)"
+                                text-anchor="middle"
+                            >
+                                380mm
+                            </text>
+
+                            <line
+                                x1="170"
+                                y1="98"
+                                x2="170"
+                                y2="440"
+                                class="bp-dim"
+                            />
+                            <line
+                                x1="165"
+                                y1="98"
+                                x2="175"
+                                y2="98"
+                                class="bp-dim"
+                            />
+                            <line
+                                x1="165"
+                                y1="440"
+                                x2="175"
+                                y2="440"
+                                class="bp-dim"
+                            />
+                            <text
+                                x="182"
+                                y="265"
+                                class="bp-label"
+                                transform="rotate(-90,182,265)"
+                                text-anchor="middle"
+                            >
+                                650mm
+                            </text>
+
+                            <line
+                                x1="10"
+                                y1="40"
+                                x2="10"
+                                y2="508"
+                                class="bp-dim"
+                            />
+                            <line
+                                x1="5"
+                                y1="40"
+                                x2="15"
+                                y2="40"
+                                class="bp-dim"
+                            />
+                            <line
+                                x1="5"
+                                y1="508"
+                                x2="15"
+                                y2="508"
+                                class="bp-dim"
+                            />
+                            <text
+                                x="7"
+                                y="280"
+                                class="bp-label"
+                                transform="rotate(-90,7,280)"
+                                text-anchor="middle"
+                            >
+                                1010mm
+                            </text>
+                        </svg>
+                    </div>
+
+                    <div class="facts" id="factsBlock">
+                        <div class="facts-brand">2pick</div>
+                        <div class="facts-type">
+                            P2P-Marktplatz f&uuml;r Gitarren
+                        </div>
+                        <div class="facts-divider"></div>
+                        <div class="fact-row">
+                            <span class="fact-key">Was</span>
+                            <span class="fact-val"
+                                >Gitarren kaufen und verkaufen, direkt zwischen
+                                Privatpersonen</span
+                            >
+                        </div>
+                        <div class="fact-row">
+                            <span class="fact-key">Schutz</span>
+                            <span class="fact-val"
+                                >K&auml;ufer- und Verk&auml;uferschutz bei jeder
+                                Transaktion</span
+                            >
+                        </div>
+                        <div class="fact-row">
+                            <span class="fact-key">Fokus</span>
+                            <span class="fact-val"
+                                >Gebrauchte, Vintage- und besondere
+                                Gitarren</span
+                            >
+                        </div>
+                        <div class="fact-row">
+                            <span class="fact-key">Prinzip</span>
+                            <span class="fact-val"
+                                >Jedes Inserat erz&auml;hlt die Geschichte des
+                                Instruments</span
+                            >
+                        </div>
+                        <div class="facts-divider"></div>
+                        <span class="badge-line"
+                            ><span class="badge-dot"></span>In Entwicklung</span
+                        >
+                        <p class="fact-footer">
+                            Die Plattform ist noch nicht live.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phase 2 -->
+            <div class="notify-layer" id="notifyLayer">
+                <p class="notify-label">Launch-Info erhalten</p>
+                <p class="notify-text">
+                    Eintragen, einmal benachrichtigt werden, wenn es losgeht.
+                </p>
+                <form class="notify-form" id="notifyForm">
+                    <input type="email" placeholder="E-Mail-Adresse" required />
+                    <button type="submit" id="submit-btn">Senden</button>
+                </form>
+                <p class="notify-copy">
+                    &copy; 2026 2pick &ensp;&middot;&ensp;
+                    <a href="/impressum.html">Impressum</a>
+                    &ensp;&middot;&ensp;
+                    <a href="/datenschutz.html">Datenschutz</a>
+                </p>
+            </div>
+        </div>
+
+        <div class="brand-fixed" id="brandMark">2pick</div>
+    </body>
+</html>

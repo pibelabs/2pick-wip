@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="de">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Deregistered</title>
+        <link rel="stylesheet" href="/main.css" />
+        <style>
+            @font-face {
+                font-family: "PPFragment";
+                src: url("/PPFragment-TextRegular.otf") format("opentype");
+                font-weight: 400;
+                font-style: normal;
+            }
+        </style>
+        <style>
+            *,
+            *::before,
+            *::after {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+
+            :root {
+                --bg: #0e0e0e;
+                --surface: #161616;
+                --border: #2a2a2a;
+                --muted: #555;
+                --body: #999;
+                --heading: #e8e2d9;
+                --accent: #c8b89a;
+            }
+
+            html,
+            body {
+                height: 100%;
+                background: var(--bg);
+                color: var(--body);
+                font-family:
+                    "helvetica-neue", "Helvetica Neue", Helvetica, sans-serif;
+                font-weight: 300;
+                letter-spacing: 0.01em;
+            }
+
+            body {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 2rem;
+                min-height: 100vh;
+            }
+
+            /* subtle grain overlay */
+            body::before {
+                content: "";
+                position: fixed;
+                inset: 0;
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+                pointer-events: none;
+                z-index: 0;
+            }
+
+            .card {
+                position: relative;
+                z-index: 1;
+                max-width: 480px;
+                width: 100%;
+                border: 1px solid var(--border);
+                background: var(--surface);
+                padding: 3rem 3rem 2.5rem;
+                opacity: 0;
+                transform: translateY(16px);
+                animation: rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.1s
+                    forwards;
+            }
+
+            @keyframes rise {
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .tag {
+                font-size: 0.65rem;
+                letter-spacing: 0.18em;
+                text-transform: uppercase;
+                color: var(--muted);
+                margin-bottom: 2rem;
+                opacity: 0;
+                animation: rise 0.5s ease 0.4s forwards;
+            }
+
+            .icon {
+                width: 40px;
+                height: 40px;
+                margin-bottom: 1.75rem;
+                opacity: 0;
+                animation: rise 0.5s ease 0.5s forwards;
+            }
+
+            .icon circle {
+                stroke: var(--border);
+                fill: none;
+                stroke-width: 1;
+            }
+
+            .icon line {
+                stroke: var(--accent);
+                stroke-width: 1.2;
+                stroke-linecap: round;
+            }
+
+            h1 {
+                font-family: "PPFragment", Georgia, serif;
+                font-weight: 400;
+                font-size: clamp(1.6rem, 4vw, 2rem);
+                color: var(--heading);
+                line-height: 1.2;
+                margin-bottom: 1.25rem;
+                opacity: 0;
+                animation: rise 0.5s ease 0.6s forwards;
+            }
+
+            p {
+                font-size: 0.8rem;
+                line-height: 1.8;
+                color: var(--body);
+                opacity: 0;
+                animation: rise 0.5s ease 0.75s forwards;
+            }
+
+            .divider {
+                height: 1px;
+                background: var(--border);
+                margin: 2rem 0;
+                opacity: 0;
+                animation: rise 0.5s ease 0.85s forwards;
+            }
+
+            .footer {
+                font-size: 0.7rem;
+                color: var(--muted);
+                opacity: 0;
+                animation: rise 0.5s ease 0.95s forwards;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="card">
+            <p class="tag">Warteliste &nbsp;/&nbsp; Statusmeldung</p>
+
+            <svg
+                class="icon"
+                viewBox="0 0 40 40"
+                xmlns="http://www.w3.org/2000/svg"
+            >
+                <circle cx="20" cy="20" r="19" />
+                <line x1="13" y1="20" x2="27" y2="20" />
+            </svg>
+
+            <h1>Du wurdest von der Warteliste entfernt.</h1>
+
+            <p>
+                Deine E-Mail-Adresse wurde aus unseren Aufzeichnungen gelöscht
+                und du wirst keine weiteren Nachrichten von uns erhalten. Es
+                sind keine weiteren Schritte deinerseits erforderlich.
+            </p>
+
+            <div class="divider"></div>
+
+            <p class="footer">
+                Falls dies ein Versehen war, kannst du dich jederzeit erneut
+                anmelden.
+            </p>
+        </div>
+    </body>
+</html>

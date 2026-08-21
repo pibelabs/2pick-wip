@@ -1,0 +1,476 @@
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --red: #c0392b;
+    --black: #0a0a0a;
+    --white: #ffffff;
+    --gray: #777;
+}
+
+html {
+    overscroll-behavior: none;
+}
+
+body {
+    font-family: "parabolica", system-ui, sans-serif;
+    font-weight: 350;
+    background: var(--black);
+    color: var(--white);
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+}
+
+/* ── Scrollable container (hijacked) ── */
+#scroll-track {
+    position: fixed;
+    inset: 0;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+    z-index: 60;
+}
+
+#scroll-spacer {
+    /* tall enough to give us scroll room: 6 viewport heights */
+    height: 600vh;
+    pointer-events: none;
+}
+
+/* ── Fixed stage ── */
+#stage {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+/* ── Phase 0: WIP title ── */
+.title-layer {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    z-index: 10;
+    will-change: transform, opacity;
+    pointer-events: none;
+}
+
+.wip {
+    font-family: "p22-mackinac-pro", monospace;
+    font-size: clamp(120px, 22vw, 320px);
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    line-height: 0.85;
+    color: var(--white);
+    user-select: none;
+}
+
+.accent-line {
+    width: 40px;
+    height: 1px;
+    background: var(--red);
+}
+
+.title-sub {
+    font-size: 12px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gray);
+}
+
+/* ── Phase 1: Blueprint + Facts ── */
+.content-layer {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+    opacity: 0;
+    will-change: opacity;
+    pointer-events: none;
+}
+
+.content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 72px;
+    max-width: 1060px;
+    width: 100%;
+    padding: 0 40px;
+    align-items: center;
+}
+
+@media (max-width: 860px) {
+    .content-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+        padding: 60px 24px;
+    }
+}
+
+.blueprint {
+    width: 100%;
+    max-width: 380px;
+    margin: 0 auto;
+}
+
+.blueprint svg {
+    width: 100%;
+    height: auto;
+}
+
+.bp-body {
+    fill: none;
+    stroke: var(--white);
+    stroke-width: 1.2;
+}
+
+.bp-detail {
+    fill: none;
+    stroke: var(--white);
+    stroke-width: 0.5;
+    opacity: 0.3;
+}
+
+.bp-dim {
+    fill: none;
+    stroke: var(--red);
+    stroke-width: 0.5;
+    stroke-dasharray: 4 3;
+}
+
+.bp-dot {
+    fill: var(--red);
+}
+
+.bp-label {
+    font-family: "", monospace;
+    font-size: 7px;
+    fill: var(--red);
+}
+
+.bp-heading {
+    font-family: "", monospace;
+    font-size: 9px;
+    fill: var(--white);
+    letter-spacing: 0.15em;
+    opacity: 0.4;
+}
+
+/* The SVG paths will draw in */
+.bp-body,
+.bp-detail {
+    stroke-dasharray: 2000;
+    stroke-dashoffset: 2000;
+    transition: stroke-dashoffset 0s;
+}
+
+.drawing .bp-body,
+.drawing .bp-detail {
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 2.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.drawing .bp-dim,
+.drawing .bp-dot,
+.drawing .bp-label,
+.drawing .bp-heading {
+    opacity: 0;
+    animation: fade-in 0.8s ease forwards;
+    animation-delay: 1.5s;
+}
+
+@keyframes fade-in {
+    to {
+        opacity: 1;
+    }
+}
+
+/* Facts */
+.facts {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+.facts-brand {
+    font-family: "p22-mackinac-pro", monospace;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.facts-type {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-top: 4px;
+}
+
+.facts-divider {
+    width: 28px;
+    height: 1px;
+    background: var(--white);
+    opacity: 0.12;
+}
+
+.fact-row {
+    display: grid;
+    grid-template-columns: 88px 1fr;
+    gap: 16px;
+    font-size: 14px;
+    line-height: 1.55;
+}
+
+.fact-key {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gray);
+    padding-top: 3px;
+}
+
+.fact-val {
+    color: var(--white);
+}
+
+.fact-row,
+.facts-brand,
+.facts-type,
+.facts-divider {
+    opacity: 0;
+    transform: translateY(12px);
+    transition:
+        opacity 0.6s ease,
+        transform 0.6s ease;
+}
+
+.facts-visible .facts-brand,
+.facts-visible .facts-type {
+    opacity: 1;
+    transform: none;
+    transition-delay: 0s;
+}
+
+.facts-visible .facts-divider:nth-of-type(1) {
+    opacity: 0.12;
+    transform: none;
+    transition-delay: 0.1s;
+}
+
+.facts-visible .fact-row:nth-child(4) {
+    opacity: 1;
+    transform: none;
+    transition-delay: 0.15s;
+}
+
+.facts-visible .fact-row:nth-child(5) {
+    opacity: 1;
+    transform: none;
+    transition-delay: 0.25s;
+}
+
+.facts-visible .fact-row:nth-child(6) {
+    opacity: 1;
+    transform: none;
+    transition-delay: 0.35s;
+}
+
+.facts-visible .fact-row:nth-child(7) {
+    opacity: 1;
+    transform: none;
+    transition-delay: 0.45s;
+}
+
+.facts-visible .facts-divider:nth-of-type(2) {
+    opacity: 0.12;
+    transform: none;
+    transition-delay: 0.5s;
+}
+
+.facts-visible .badge-line {
+    opacity: 1;
+    transform: none;
+    transition-delay: 0.55s;
+}
+
+.facts-visible .fact-footer {
+    opacity: 1;
+    transform: none;
+    transition-delay: 0.6s;
+}
+
+.badge-line {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--red);
+    opacity: 0;
+    transform: translateY(12px);
+    transition:
+        opacity 0.6s ease,
+        transform 0.6s ease;
+}
+
+.badge-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--red);
+}
+
+.fact-footer {
+    font-size: 13px;
+    color: var(--gray);
+    line-height: 1.6;
+    opacity: 0;
+    transform: translateY(12px);
+    transition:
+        opacity 0.6s ease,
+        transform 0.6s ease;
+}
+
+/* ── Phase 2: Notify ── */
+.notify-layer {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    z-index: 3;
+    opacity: 0;
+    will-change: opacity;
+    pointer-events: none;
+}
+
+.notify-layer.active {
+    pointer-events: auto;
+}
+
+.notify-label {
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gray);
+}
+
+.notify-text {
+    font-family: "p22-mackinac-pro", monospace;
+    font-size: clamp(16px, 2.5vw, 22px);
+    text-align: center;
+    max-width: 460px;
+    line-height: 1.6;
+    color: var(--white);
+    padding: 0 24px;
+}
+
+.notify-form {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+    max-width: 380px;
+    margin-top: 4px;
+    padding: 0 24px;
+}
+
+.notify-form input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--white);
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.25s;
+}
+
+.notify-form input::placeholder {
+    color: #444;
+}
+
+.notify-form input:focus {
+    border-color: var(--red);
+}
+
+.notify-form button {
+    padding: 12px 24px;
+    background: var(--red);
+    border: none;
+    border-radius: 8px;
+    color: var(--white);
+    font-size: 14px;
+    font-family: inherit;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+}
+
+.notify-form button:hover {
+    background: #5a1414;
+}
+
+.notify-copy {
+    font-size: 12px;
+    color: #333;
+    margin-top: 12px;
+}
+
+.notify-copy a {
+    color: var(--red);
+    text-decoration: none;
+}
+
+/* ── Scroll progress indicator ── */
+#progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    width: 0%;
+    background: var(--red);
+    z-index: 100;
+    transition: width 0.05s linear;
+}
+
+/* ── Bottom brand mark ── */
+.brand-fixed {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: "p22-mackinac-pro", monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: #333;
+    z-index: 50;
+    transition: color 0.4s;
+}
+
+.brand-fixed.light {
+    color: #555;
+}
+
+#submit-btn {
+    font-family: "p22-mackinac-pro";
+}
