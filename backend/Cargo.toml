@@ -12,11 +12,11 @@ tower-http = { version = "0.6", features = ["fs", "cors", "trace", "request-id"]
 chrono = { version = "0.4", features = ["serde"] }
 tracing = "0.1.44"
 tracing-subscriber = { version = "0.3.23", features = ["env-filter", "fmt"] }
-sqlx = { version = "0.8.6", features = ["sqlite", "runtime-tokio", "chrono"] }
+sqlx = { version = "0.8.6", features = ["postgres", "runtime-tokio", "chrono", "uuid", "tls-native-tls"] }
 tracing-appender = "0.2.5"
 tracing-log = "0.2.0"
 anyhow = "1.0.102"
 email_address = "0.2.9"
 resend-rs = "0.25.1"
 minijinja = "2.19.0"
-uuid = "1.23.1"
+uuid = { version = "1.23.1", features = ["serde"] }

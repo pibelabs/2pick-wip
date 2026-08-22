@@ -28,6 +28,24 @@
                 <div class="accent-line"></div>
                 <div class="wip">WIP</div>
                 <p class="title-sub">2pick</p>
+
+                <button class="scroll-cta" id="scrollCta" type="button" aria-label="Nach unten scrollen">
+                    <span>Scroll</span>
+                    <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 16 16"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path
+                            d="M3 6L8 11L13 6"
+                            stroke-width="1.5"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        />
+                    </svg>
+                </button>
             </div>
 
             <!-- Phase 1 -->
@@ -406,5 +424,14 @@
         </div>
 
         <div class="brand-fixed" id="brandMark">2pick</div>
+
+        <script>
+            document
+                .getElementById("scrollCta")
+                .addEventListener("click", function () {
+                    document.getElementById("scroll-track").scrollTop +=
+                        window.innerHeight * 1.2;
+                });
+        </script>
     </body>
 </html>
