@@ -5,7 +5,7 @@ use std::env;
 use axum::{
     Json, Router,
     extract::{FromRef, Path, Request, State},
-    http::{StatusCode, Uri, header::CONTENT_TYPE},
+    http::{StatusCode, Uri},
     middleware,
     response::{IntoResponse, Redirect, Response},
     routing::{get, post},
@@ -14,7 +14,7 @@ use chrono::{DateTime, Utc};
 use email_address::EmailAddress;
 use minijinja::context;
 use serde::Deserialize;
-use sqlx::SqlitePool;
+use sqlx::PgPool;
 use tokio::net::TcpListener;
 use tower_http::services::ServeDir;
 use tracing_subscriber::{fmt, layer::SubscriberExt, util::SubscriberInitExt};
@@ -22,11 +22,9 @@ use uuid::Uuid;
 
 use crate::email_service::{EmailPacket, EmailService};
 
-static DB_ADDRESS: &str = "sqlite://db.sqlite3?mode=rwc";
-
 #[derive(FromRef, Clone)]
 struct AppState {
-    db: SqlitePool,
+    db: PgPool,
     email_svc: EmailService,
 }
 
@@ -71,7 +69,8 @@ async fn main() -> anyhow::Result<()> {
     tracing::info!("Bound listener");
 
     tracing::info!("Attempting to open DB...");
-    let db = sqlx::SqlitePool::connect(DB_ADDRESS).await?;
+    let db_addr = env::var("DATABASE_URL")?;
+    let db = sqlx::PgPool::connect(&db_addr).await?;
     tracing::info!("Opened DB");
 
     let email_svc = EmailService::new(
@@ -89,8 +88,7 @@ async fn main() -> anyhow::Result<()> {
     let router = Router::new()
         .nest("/api", api_router)
         .fallback_service(serve_dir)
-        .layer(middleware::from_fn(add_html_ext))
-        .layer(middleware::from_fn(fix_font_mime));
+        .layer(middleware::from_fn(add_html_ext));
 
     axum::serve(tcp_listener, router)
         .with_graceful_shutdown(shutdown(now))
@@ -99,30 +97,32 @@ async fn main() -> anyhow::Result<()> {
     Ok(())
 }
 
-async fn fix_font_mime(req: Request<axum::body::Body>, next: middleware::Next) -> Response {
-    let is_otf = req.uri().path().ends_with(".otf");
-    let mut response = next.run(req).await;
-    if is_otf {
-        response
-            .headers_mut()
-            .insert(CONTENT_TYPE, "font/otf".parse().unwrap());
-    }
-    response
-}
-
 #[derive(Deserialize)]
 struct WaitlistRequest {
     email: email_address::EmailAddress,
 }
 
 async fn add_to_waitlist(
-    State(pool): State<SqlitePool>,
+    State(pool): State<PgPool>,
     State(svc): State<EmailService>,
     Json(body): Json<WaitlistRequest>,
 ) -> impl IntoResponse {
-    let uuid = Uuid::new_v4().hyphenated().to_string();
+    let uuid = Uuid::new_v4();
 
-    match add_to_waitlist_inner(body.email.clone(), uuid.clone(), pool).await {
+    match sqlx::query!(
+        "
+            with uid as (
+                insert into waitlist (email) values ($1)
+                returning id
+            )
+            insert into deregistration_links (id, user_id) select $2, id from uid
+        ",
+        body.email.as_str(),
+        uuid
+    )
+    .execute(&pool)
+    .await
+    {
         Ok(_) => {
             svc.send(EmailPacket::new(
                 "signup-email".to_owned(),
@@ -147,78 +147,35 @@ async fn add_to_waitlist(
     }
 }
 
-async fn add_to_waitlist_inner(
-    email: email_address::EmailAddress,
-    uuid: String,
-    pool: SqlitePool,
-) -> sqlx::Result<()> {
-    let email = email.as_str();
-
-    let mut tx = pool.begin().await?;
-    let uid = sqlx::query!(
+async fn deregister(
+    Path(uuid): Path<Uuid>,
+    State(pool): State<PgPool>,
+) -> Result<Redirect, impl IntoResponse> {
+    match sqlx::query!(
         "
-            insert into waitlist (email) values ($1)
-            returning id
+            delete from waitlist
+            using deregistration_links
+            where
+                deregistration_links.id = $1 and
+                waitlist.id = deregistration_links.user_id
         ",
-        email
-    )
-    .fetch_one(&mut *tx)
-    .await?
-    .id;
-
-    sqlx::query!(
-        "
-            insert into deregistration_links (user_id, value) values ($1, $2)
-        ",
-        uid,
         uuid
     )
-    .execute(&mut *tx)
-    .await?;
-
-    tx.commit().await
-}
-
-async fn deregister(
-    Path(uuid): Path<String>,
-    State(pool): State<SqlitePool>,
-) -> Result<Redirect, impl IntoResponse> {
-    match deregister_inner(uuid.clone(), pool).await {
-        Ok(()) => Ok(Redirect::to("/deregister.html")),
+    .execute(&pool)
+    .await
+    {
+        Ok(_) => Ok(Redirect::to("/deregister.html")),
         Err(sqlx::Error::RowNotFound) => {
             Err((StatusCode::NOT_FOUND, "Diese E-Mail ist nicht registriert"))
         }
         Err(e) => {
-            tracing::error!(uuid = uuid, err = ?e, "Database returned error");
+            tracing::error!(uuid = ?uuid, err = ?e, "Database returned error");
             Err((
                 StatusCode::INTERNAL_SERVER_ERROR,
                 "Ein interner Fehler ist aufgetreten",
             ))
         }
     }
-}
-
-async fn deregister_inner(uuid: String, pool: SqlitePool) -> sqlx::Result<()> {
-    let mut tx = pool.begin().await?;
-    let user_id = sqlx::query!(
-        "
-            delete from deregistration_links where value = $1 returning user_id
-        ",
-        uuid
-    )
-    .fetch_one(&mut *tx)
-    .await?;
-
-    sqlx::query!(
-        "
-            delete from waitlist where id = $1
-        ",
-        user_id.user_id
-    )
-    .execute(&mut *tx)
-    .await?;
-
-    tx.commit().await
 }
 
 async fn shutdown(started_at: DateTime<Utc>) {
