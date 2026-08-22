@@ -90,6 +90,64 @@ body {
     color: var(--gray);
 }
 
+/* ── Scroll CTA (Phase 0) ── */
+.scroll-cta {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: var(--white);
+    font-size: 14px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    opacity: 0.7;
+    pointer-events: auto;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    line-height: 1;
+    text-align: center;
+    font-family: inherit;
+    -webkit-appearance: none;
+    appearance: none;
+    outline: none;
+    animation: scroll-hint 2s ease-in-out infinite;
+    transition: opacity 0.2s;
+}
+
+.scroll-cta:hover,
+.scroll-cta:focus-visible {
+    opacity: 1;
+}
+
+.scroll-cta:focus-visible {
+    outline: 1px solid var(--red);
+    outline-offset: 4px;
+}
+
+.scroll-cta svg {
+    stroke: var(--gray);
+    display: block;
+}
+
+@keyframes scroll-hint {
+    0%,
+    100% {
+        transform: translateX(-50%) translateY(0);
+        opacity: 0.7;
+    }
+    50% {
+        transform: translateX(-50%) translateY(6px);
+        opacity: 0.3;
+    }
+}
+
 /* ── Phase 1: Blueprint + Facts ── */
 .content-layer {
     position: absolute;
