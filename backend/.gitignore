@@ -1,4 +1,4 @@
-.env*
+.env
 /target/
 db.sqlite3
 /log/
