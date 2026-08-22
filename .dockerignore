@@ -1,7 +1,0 @@
-**/.*
-!backend/.sqlx
-**/log
-**/migrations
-**/target
-**/README.md
-**/skills-lock.json
