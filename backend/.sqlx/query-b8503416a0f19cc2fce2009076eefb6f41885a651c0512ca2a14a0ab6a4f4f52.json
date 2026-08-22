@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            with uid as (\n                insert into waitlist (email) values ($1)\n                returning id\n            )\n            insert into deregistration_links (id, user_id) select $2, id from uid\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Uuid"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "b8503416a0f19cc2fce2009076eefb6f41885a651c0512ca2a14a0ab6a4f4f52"
+}
