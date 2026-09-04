@@ -75,7 +75,7 @@ async fn main() -> anyhow::Result<()> {
 
     let email_svc = EmailService::new(
         resend_api_key,
-        EmailAddress::new_unchecked("noreply@2pick.de"),
+        EmailAddress::new_unchecked("hello@2pick.de"),
     )
     .await?;
 
@@ -97,9 +97,11 @@ async fn main() -> anyhow::Result<()> {
     Ok(())
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 struct WaitlistRequest {
     email: email_address::EmailAddress,
+    #[serde(rename = "refId")]
+    ref_id: Option<Uuid>,
 }
 
 async fn add_to_waitlist(
@@ -108,43 +110,87 @@ async fn add_to_waitlist(
     Json(body): Json<WaitlistRequest>,
 ) -> impl IntoResponse {
     let uuid = Uuid::new_v4();
+    let ref_id = Uuid::now_v7();
 
-    match sqlx::query!(
+    let data = match sqlx::query!(
         "
-            with uid as (
-                insert into waitlist (email) values ($1)
-                returning id
-            )
-            insert into deregistration_links (id, user_id) select $2, id from uid
+        with referrer as (
+            select id, creator from referral_links where referral_links.id = $1
+        ),
+        uid as (
+            insert into waitlist (email, referred_by)
+            values ($2, (select creator from referrer))
+            returning waitlist.id, waitlist.email
+        ),
+        dereg_link as (
+            insert into deregistration_links (id, user_id) select $3, id from uid
+        ),
+        ref_link as (
+            insert into referral_links (id, creator) select $4, id from uid
+        ),
+        ref_count as (
+            select count(waitlist.id) as count from waitlist, referrer
+            where waitlist.referred_by = referrer.creator
+        )
+        select
+            uid.email as \"email!\",
+            (select count + 1 from ref_count) as count,
+            (select id from referrer) as ref_id
+        from uid
         ",
+        body.ref_id,
         body.email.as_str(),
-        uuid
+        uuid,
+        ref_id
     )
-    .execute(&pool)
+    .fetch_one(&pool)
     .await
     {
-        Ok(_) => {
-            svc.send(EmailPacket::new(
-                "signup-email".to_owned(),
-                context! { unsubscribe_link => format!("https://2pick.de/api/deregister/{uuid}") },
-                body.email,
-            ))
-            .await
-            .unwrap();
-
-            (StatusCode::OK, "Registriert")
-        }
+        Ok(res) => res,
         Err(sqlx::Error::Database(e)) if e.is_unique_violation() => {
-            (StatusCode::CONFLICT, "Bereits registriert")
+            return (StatusCode::CONFLICT, "Bereits registriert");
         }
         Err(e) => {
             tracing::error!(err = ?e, "Database returned error");
-            (
+            return (
                 StatusCode::INTERNAL_SERVER_ERROR,
                 "Bitte versuchen sie es später noch einmal",
-            )
+            );
         }
+    };
+
+    if let Some(ref_id) = data.ref_id
+        && data.count == Some(2)
+    {
+        _ = svc
+            .send(EmailPacket::new(
+                "referral-success".to_owned(),
+                context! {
+                    referral_link => format!("https://2pick.de?refId={ref_id}")
+                },
+                // ok because all entries in db are checked
+                EmailAddress::new_unchecked(data.email),
+                "Vielen Dank für deine Hilfe!".to_owned(),
+            ))
+            .await;
     }
+
+    if let Err(e) = svc
+        .send(EmailPacket::new(
+            "signup-email".to_owned(),
+            context! {
+                referral_link => format!("https://2pick.de?refId={ref_id}"),
+                unsubscribe_link => format!("https://2pick.de/api/deregister/{uuid}")
+            },
+            body.email,
+            "Wilkommen bei 2pick!".to_owned(),
+        ))
+        .await
+    {
+        tracing::error!("Failed to send email: {e:#?}");
+    }
+
+    return (StatusCode::OK, "Registriert");
 }
 
 async fn deregister(

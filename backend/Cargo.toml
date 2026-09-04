@@ -19,4 +19,4 @@ anyhow = "1.0.102"
 email_address = "0.2.9"
 resend-rs = "0.25.1"
 minijinja = "2.19.0"
-uuid = { version = "1.23.1", features = ["serde"] }
+uuid = { version = "1.23.1", features = ["serde", "v7"] }

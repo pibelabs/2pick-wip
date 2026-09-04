@@ -16,11 +16,17 @@ pub struct EmailPacket {
     tmpl: String,
     ctx: minijinja::Value,
     to: EmailAddress,
+    subject: String,
 }
 
 impl EmailPacket {
-    pub fn new(tmpl: String, ctx: minijinja::Value, to: EmailAddress) -> Self {
-        Self { tmpl, ctx, to }
+    pub fn new(tmpl: String, ctx: minijinja::Value, to: EmailAddress, subject: String) -> Self {
+        Self {
+            tmpl,
+            ctx,
+            to,
+            subject,
+        }
     }
 }
 
@@ -115,7 +121,7 @@ async fn send_mail(
     let email = CreateEmailBaseOptions::new(
         format!("2pick <{}>", self_email.as_str()),
         [packet.to.email()],
-        "2pick",
+        packet.subject,
     )
     .with_html(&rendered);
 
