@@ -1,0 +1,37 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        with referrer as (\n            select id, creator from referral_links where referral_links.id = $1\n        ),\n        uid as (\n            insert into waitlist (email, referred_by)\n            values ($2, (select creator from referrer))\n            returning waitlist.id, waitlist.email\n        ),\n        dereg_link as (\n            insert into deregistration_links (id, user_id) select $3, id from uid\n        ),\n        ref_link as (\n            insert into referral_links (id, creator) select $4, id from uid\n        ),\n        ref_count as (\n            select count(waitlist.id) as count from waitlist, referrer\n            where waitlist.referred_by = referrer.creator\n        )\n        select\n            uid.email as \"email!\",\n            (select count + 1 from ref_count) as count,\n            (select id from referrer) as ref_id\n        from uid\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "email!",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 1,
+        "name": "count",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 2,
+        "name": "ref_id",
+        "type_info": "Uuid"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Text",
+        "Uuid",
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false,
+      null,
+      null
+    ]
+  },
+  "hash": "237b3a1d7e3ce1243a727ecc6bdee3940540e219db9134759a71fdc1e09128f4"
+}
