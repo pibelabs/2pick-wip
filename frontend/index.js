@@ -11,6 +11,8 @@ var notifyForm = document.getElementById("notifyForm");
 var blueprintDrawn = false;
 var factsShown = false;
 
+const urlParams = new URLSearchParams(window.location.search);
+
 function lerp(a, b, t) {
   return a + (b - a) * Math.max(0, Math.min(1, t));
 }
@@ -95,6 +97,8 @@ document.addEventListener(
 // Form
 notifyForm.addEventListener("submit", function (e) {
   e.preventDefault();
+
+  const refId = urlParams.get('refId');
   var input = notifyForm.querySelector("input");
   var btn = notifyForm.querySelector("button");
   var email = input.value.trim();
@@ -107,7 +111,7 @@ notifyForm.addEventListener("submit", function (e) {
   fetch("/api/waitlist", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email: email }),
+    body: JSON.stringify({ email: email, refId: refId }),
   })
     .then(function (res) {
       return res.text().then(function (text) {
